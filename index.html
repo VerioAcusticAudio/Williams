@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verio — Aplicaciones Didácticas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--cream:#FAF6F1;--cream-dark:#F0EAE0;
+--sage:#8FA98B;--sage-light:#B5C9B2;--sage-dark:#6B8A67;
+--terracotta:#C47C5A;--terracotta-light:#D4A088;--terracotta-dark:#A8613F;
+--wood:#8B7355;--wood-light:#A69279;--wood-dark:#6B5740;
+--charcoal:#2D2A26;--charcoal-light:#4A4640;--warm-gray:#9E9A94;
+--borgona:#7A2E3A;--borgona-light:#9E4A58;--borgona-dark:#5C1E2A;
+--gold:#C4A35A;--gold-light:#D4BB7E;
+--text:#2D2A26;--text-secondary:#6B6560;--text-muted:#9E9A94;
+--radius:10px;--radius-sm:6px;--radius-lg:14px;
+--shadow:0 2px 12px rgba(45,42,38,0.08);
+--shadow-lg:0 8px 32px rgba(45,42,38,0.12);
+--font-sans:'DM Sans',sans-serif;
+--font-mono:'JetBrains Mono',monospace;
+}
+html{font-size:15px}
+body{
+  font-family:var(--font-sans);background:var(--cream);
+  color:var(--text);min-height:100vh;overflow-x:hidden;
+}
+.app-header{
+  background:var(--charcoal);color:var(--cream);
+  padding:18px 28px;display:flex;align-items:center;gap:16px;
+  position:sticky;top:0;z-index:100;
+}
+.app-header .logo{
+  width:36px;height:36px;background:var(--borgona);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:18px;color:var(--cream);
+}
+.app-header h1{font-size:1.15rem;font-weight:600;letter-spacing:-0.02em}
+.app-header .subtitle{font-size:.78rem;color:var(--warm-gray);margin-left:auto;font-family:var(--font-mono)}
+
+.main-grid{
+  display:grid;grid-template-columns:300px 1fr 320px;
+  grid-template-rows:auto auto;gap:16px;padding:16px;
+  max-width:1600px;margin:0 auto;
+}
+@media(max-width:1200px){.main-grid{grid-template-columns:1fr}}
+
+.panel{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden}
+.panel-header{
+  padding:14px 18px;border-bottom:1px solid var(--cream-dark);
+  display:flex;align-items:center;gap:10px;
+}
+.panel-header h2{
+  font-size:.85rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.06em;color:var(--charcoal);
+}
+.panel-header .icon{
+  width:28px;height:28px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+}
+.panel-body{padding:18px}
+.control-group{margin-bottom:18px}
+.control-group:last-child{margin-bottom:0}
+.control-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.control-label label{
+  font-size:.78rem;font-weight:600;color:var(--charcoal);
+  text-transform:uppercase;letter-spacing:0.04em;
+}
+.control-label .value{
+  font-family:var(--font-mono);font-size:.82rem;font-weight:600;
+  color:var(--borgona);background:var(--cream);padding:2px 8px;
+  border-radius:var(--radius-sm);cursor:pointer;
+  transition:background 0.15s, box-shadow 0.15s;
+  user-select:none;
+}
+.control-label .value:hover{
+  background:var(--cream-dark);
+  box-shadow:0 0 0 2px var(--borgona-light);
+}
+.control-label .value-input{
+  font-family:var(--font-mono);font-size:.82rem;font-weight:600;
+  color:var(--borgona);background:#fff;padding:2px 6px;
+  border:2px solid var(--borgona);border-radius:var(--radius-sm);
+  outline:none;width:72px;text-align:center;
+}
+
+input[type="range"]{
+  -webkit-appearance:none;width:100%;height:6px;
+  border-radius:3px;background:var(--cream-dark);outline:none;cursor:pointer;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--borgona);border:3px solid #fff;
+  box-shadow:0 2px 6px rgba(122,46,58,0.3);cursor:pointer;transition:transform 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type="range"]::-webkit-slider-thumb:active{transform:scale(1.25);background:var(--borgona-dark)}
+
+.pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pattern-btn{
+  padding:8px 6px;border:2px solid var(--cream-dark);border-radius:var(--radius-sm);
+  background:var(--cream);cursor:pointer;text-align:center;
+  font-family:var(--font-sans);font-size:.72rem;font-weight:600;
+  color:var(--text-secondary);transition:all 0.2s;
+  text-transform:uppercase;letter-spacing:0.03em;
+}
+.pattern-btn:hover{border-color:var(--sage);background:var(--sage-light);color:var(--charcoal)}
+.pattern-btn.active{
+  border-color:var(--borgona);background:var(--borgona);color:#fff;
+  box-shadow:0 2px 8px rgba(122,46,58,0.25);
+}
+
+.ab-display{
+  display:flex;gap:12px;margin-top:10px;padding:10px;
+  background:var(--cream);border-radius:var(--radius-sm);
+  font-family:var(--font-mono);font-size:.8rem;
+}
+.ab-display span{color:var(--text-secondary)}
+.ab-display strong{color:var(--borgona)}
+.divider{height:1px;background:var(--cream-dark);margin:16px 0}
+
+.delta-db-display{
+  text-align:center;padding:20px 10px;
+  background:linear-gradient(135deg,var(--cream),#fff);
+  border-radius:var(--radius);border:1px solid var(--cream-dark);
+}
+.delta-db-display .label{font-size:.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:4px}
+.delta-db-display .big-value{
+  font-family:var(--font-mono);font-size:2.4rem;font-weight:700;
+  color:var(--borgona);line-height:1;transition:color 0.3s;
+}
+.delta-db-display .unit{font-size:.85rem;color:var(--text-secondary);margin-left:2px}
+.delta-db-display.negative .big-value{color:var(--sage-dark)}
+
+canvas{display:block;width:100%;border-radius:var(--radius-sm)}
+.viz-canvas-wrap{position:relative;background:var(--cream);border-radius:var(--radius);overflow:hidden}
+
+.stereo-bar-wrap{margin-top:12px}
+.stereo-bar{
+  position:relative;height:36px;
+  background:linear-gradient(90deg,var(--sage),var(--cream-dark) 50%,var(--terracotta));
+  border-radius:18px;overflow:visible;border:2px solid #fff;box-shadow:var(--shadow);
+}
+.stereo-bar .marker{
+  position:absolute;top:-4px;width:8px;height:44px;
+  background:var(--borgona);border-radius:4px;
+  transform:translateX(-50%);transition:left 0.15s;
+  box-shadow:0 2px 8px rgba(122,46,58,0.4);z-index:2;
+}
+.stereo-bar .center-line{
+  position:absolute;left:50%;top:4px;width:2px;height:28px;
+  background:rgba(45,42,38,0.2);transform:translateX(-50%);
+}
+.stereo-bar .labels{
+  display:flex;justify-content:space-between;padding:0 12px;
+  position:absolute;width:100%;top:50%;transform:translateY(-50%);
+  font-size:.7rem;font-weight:700;color:rgba(45,42,38,0.5);
+  letter-spacing:0.05em;pointer-events:none;
+}
+
+.formula-box{
+  background:var(--cream);border-radius:var(--radius);
+  padding:16px;border:1px solid var(--cream-dark);margin-top:12px;
+}
+.formula-box .katex{font-size:1rem}
+.formula-live{
+  margin-top:12px;font-family:var(--font-mono);font-size:.75rem;
+  color:var(--text-secondary);line-height:1.7;padding:10px;
+  background:#fff;border-radius:var(--radius-sm);border:1px solid var(--cream-dark);
+}
+.formula-live .hl{color:var(--borgona);font-weight:600}
+
+.bottom-row{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:1200px){.bottom-row{grid-template-columns:1fr}}
+
+.tab-bar{display:flex;gap:4px;padding:4px;background:var(--cream);border-radius:var(--radius-sm)}
+.tab-btn{
+  padding:7px 14px;border:none;background:transparent;
+  border-radius:var(--radius-sm);cursor:pointer;
+  font-family:var(--font-sans);font-size:.73rem;font-weight:600;
+  color:var(--text-secondary);transition:all 0.2s;
+}
+.tab-btn:hover{background:var(--cream-dark)}
+.tab-btn.active{background:var(--borgona);color:#fff}
+
+.sweep-controls{display:flex;gap:8px;align-items:center;margin-top:12px}
+.sweep-controls button{
+  padding:7px 16px;border:2px solid var(--borgona);background:transparent;
+  border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-sans);
+  font-size:.73rem;font-weight:600;color:var(--borgona);transition:all 0.2s;
+}
+.sweep-controls button:hover{background:var(--borgona);color:#fff}
+.sweep-controls button.running{background:var(--borgona);color:#fff}
+
+.tooltip{
+  position:absolute;background:var(--charcoal);color:var(--cream);
+  padding:6px 12px;border-radius:var(--radius-sm);font-size:.72rem;
+  font-family:var(--font-mono);pointer-events:none;z-index:50;
+  white-space:nowrap;opacity:0;transition:opacity 0.2s;
+}
+.legend-row{display:flex;gap:16px;justify-content:center;padding:8px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.7rem;font-weight:500;color:var(--text-secondary)}
+.legend-item .dot{width:10px;height:10px;border-radius:50%}
+
+.custom-ab-group{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.preset-info{font-size:.7rem;color:var(--text-muted);text-align:center;margin-top:6px;font-style:italic}
+
+.channel-meters{display:flex;gap:16px;margin-top:14px}
+.ch-meter{flex:1}
+.ch-meter .ch-label{
+  font-size:.68rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.06em;margin-bottom:4px;text-align:center;
+}
+.ch-meter .ch-label.left{color:var(--sage-dark)}
+.ch-meter .ch-label.right{color:var(--terracotta-dark)}
+.ch-bar-track{height:10px;background:var(--cream-dark);border-radius:5px;overflow:hidden}
+.ch-bar-fill{height:100%;border-radius:5px;transition:width 0.15s}
+.ch-bar-fill.left{background:linear-gradient(90deg,var(--sage-dark),var(--sage))}
+.ch-bar-fill.right{background:linear-gradient(90deg,var(--terracotta),var(--terracotta-dark))}
+.ch-db{font-family:var(--font-mono);font-size:.7rem;text-align:center;margin-top:3px;color:var(--text-secondary)}
+
+.drag-hint{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  background:rgba(45,42,38,0.75);color:var(--cream);
+  padding:5px 14px;border-radius:20px;font-size:.68rem;font-weight:500;
+  pointer-events:none;opacity:0;transition:opacity 0.5s;
+}
+
+.reset-flash{
+  animation:resetFlash 0.35s ease-out;
+}
+@keyframes resetFlash{
+  0%{box-shadow:0 0 0 0 rgba(122,46,58,0.5)}
+  100%{box-shadow:0 0 0 12px rgba(122,46,58,0)}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="logo">V</div>
+  <h1>Fórmula de Williams - Dif de Nivel entre componentes de una Señal Estereo</h1>    
+</header>
+
+<div class="main-grid">
+
+  <div class="panel" id="controls-panel">
+    <div class="panel-header">
+      <div class="icon" style="background:var(--borgona-light);color:#fff">⚙</div>
+      <h2>Parámetros del Arreglo</h2>
+    </div>
+    <div class="panel-body">
+
+      <div class="control-group">
+        <div class="control-label"><label>Patrón Polar</label></div>
+        <div class="pattern-grid" id="patternGrid">
+          <button class="pattern-btn" data-a="1" data-b="0" data-name="Omni">Omni</button>
+          <button class="pattern-btn" data-a="0" data-b="1" data-name="Bidireccional">Bidirec. (Fig. de 8)</button>
+          <button class="pattern-btn active" data-a="0.5" data-b="0.5" data-name="Cardioide">Cardioide</button>
+          <button class="pattern-btn" data-a="0.366" data-b="0.634" data-name="Supercardioide">Súper</button>
+          <button class="pattern-btn" data-a="0.25" data-b="0.75" data-name="Hipercardioide">Híper</button>
+          <button class="pattern-btn" data-a="" data-b="" data-name="Personalizado" id="customBtn">✎ Custom</button>
+        </div>
+        <div class="ab-display"><span>a =</span><strong id="aVal">0.500</strong><span>b =</span><strong id="bVal">0.500</strong></div>
+      </div>
+
+      <div class="control-group" id="customAbGroup" style="display:none">
+        <div class="custom-ab-group">
+          <div>
+            <div class="control-label"><label>Coef. a</label><span class="value" id="customAVal" data-slider="customA">0.50</span></div>
+            <input type="range" id="customA" min="0" max="1" step="0.01" value="0.5" data-default="0.5">
+          </div>
+          <div>
+            <div class="control-label"><label>Coef. b</label><span class="value" id="customBVal" data-slider="customB">0.50</span></div>
+            <input type="range" id="customB" min="0" max="1" step="0.01" value="0.5" data-default="0.5">
+          </div>
+        </div>
+        <div class="preset-info">a + b cos(θ) — ecuación polar del micrófono</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="control-group">
+        <div class="control-label"><label>θ<sub>m</sub> — Ángulo entre ejes</label><span class="value" id="thetaMVal" data-slider="thetaM">90°</span></div>
+        <input type="range" id="thetaM" min="0" max="180" step="1" value="90" data-default="90">
+        <div class="preset-info">Ángulo entre los ejes de los micrófonos · doble click = reset</div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label"><label>θ<sub>s</sub> — Ángulo fuente</label><span class="value" id="thetaSVal" data-slider="thetaS">0°</span></div>
+        <input type="range" id="thetaS" min="-90" max="90" step="0.5" value="0" data-default="0">
+        <div class="preset-info">Ángulo de la fuente respecto al centro</div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label"><label>d — Distancia fuente</label><span class="value" id="srcDistVal" data-slider="srcDist">2.0 m</span></div>
+        <input type="range" id="srcDist" min="0.3" max="12" step="0.1" value="2.0" data-default="2.0">
+        <div class="preset-info">Distancia de la fuente al par de micrófonos</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="delta-db-display" id="deltaDbBox">
+        <div class="label">Diferencia Intercanal</div>
+        <div><span class="big-value" id="deltaDbValue">0.0</span><span class="unit">dB</span></div>
+      </div>
+
+      <div class="channel-meters">
+        <div class="ch-meter">
+          <div class="ch-label left">L — Izq.</div>
+          <div class="ch-bar-track"><div class="ch-bar-fill left" id="chLBar" style="width:50%"></div></div>
+          <div class="ch-db" id="chLDb">0.0 dB</div>
+        </div>
+        <div class="ch-meter">
+          <div class="ch-label right">R — Der.</div>
+          <div class="ch-bar-track"><div class="ch-bar-fill right" id="chRBar" style="width:50%"></div></div>
+          <div class="ch-db" id="chRDb">0.0 dB</div>
+        </div>
+      </div>
+
+      <div class="stereo-bar-wrap">
+        <div class="control-label" style="margin-bottom:6px"><label>Imagen Estéreo Percibida</label></div>
+        <div class="stereo-bar" id="stereoBar">
+          <div class="center-line"></div>
+          <div class="marker" id="stereoMarker" style="left:50%"></div>
+          <div class="labels"><span>L</span><span>C</span><span>R</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="panel" style="grid-row:span 2">
+    <div class="panel-header">
+      <div class="icon" style="background:var(--sage);color:#fff">◎</div>
+      <h2>Arreglo de Micrófonos — Vista Superior</h2>
+      <div style="margin-left:auto">
+        <div class="tab-bar" id="vizTabs">
+          <button class="tab-btn active" data-tab="arrangement">Arreglo</button>
+          <button class="tab-btn" data-tab="polar">Polar</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="viz-canvas-wrap">
+        <canvas id="mainCanvas" width="900" height="700"></canvas>
+        <div class="drag-hint" id="dragHint">Arrastrá la fuente sonora</div>
+        <div class="tooltip" id="canvasTooltip"></div>
+      </div>
+      <div class="legend-row">
+        <div class="legend-item"><div class="dot" style="background:var(--sage-dark)"></div>Mic L</div>
+        <div class="legend-item"><div class="dot" style="background:var(--terracotta-dark)"></div>Mic R</div>
+        <div class="legend-item"><div class="dot" style="background:var(--borgona)"></div>Fuente</div>
+        <div class="legend-item"><div class="dot" style="background:var(--gold)"></div>Ángulo θ<sub>s</sub></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="icon" style="background:var(--gold);color:var(--charcoal)">𝑓</div>
+      <h2>Fórmula</h2>
+    </div>
+    <div class="panel-body">
+      <div class="formula-box" id="formulaBox"></div>
+      <div class="formula-live" id="formulaLive"></div>
+    </div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="icon" style="background:var(--terracotta);color:#fff">📈</div>
+        <h2>ΔdB vs θ<sub>s</sub> — Curva de Localización</h2>
+      </div>
+      <div class="panel-body">
+        <div class="viz-canvas-wrap">
+          <canvas id="curveCanvas" width="800" height="340"></canvas>
+          <div class="tooltip" id="curveTooltip"></div>
+        </div>
+        <div class="sweep-controls">
+          <button id="sweepBtn" onclick="toggleSweep()">▶ Barrido Animado</button>
+          <span style="font-size:.72rem;color:var(--text-muted)">Animación de θ<sub>s</sub> de −90° a +90°</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="icon" style="background:var(--sage-dark);color:#fff">◐</div>
+        <h2>Comparativa de Patrones</h2>
+      </div>
+      <div class="panel-body">
+        <div class="viz-canvas-wrap">
+          <canvas id="compareCanvas" width="800" height="340"></canvas>
+        </div>
+        <div class="legend-row" id="compareLegend"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var DEG = Math.PI/180;
+
+var PATTERNS = {
+  omni:          {a:1,     b:0,     name:'Omnidireccional', color:'#8FA98B'},
+  bidi:          {a:0,     b:1,     name:'Bidireccional',   color:'#C47C5A'},
+  cardioid:      {a:0.5,   b:0.5,   name:'Cardioide',       color:'#7A2E3A'},
+  supercardioid: {a:0.366, b:0.634, name:'Supercardioide',  color:'#C4A35A'},
+  hypercardioid: {a:0.25,  b:0.75,  name:'Hipercardioide',  color:'#6B5740'}
+};
+
+var state = {
+  a: 0.5, b: 0.5,
+  thetaM: 90, thetaS: 0,
+  srcDist: 2.0,
+  customMode: false,
+  activeTab: 'arrangement',
+  sweepRunning: false, sweepDir: 1,
+  _srcScreenX: 0, _srcScreenY: 0,
+  _cx: 0, _cy: 0, _R: 0
+};
+
+var sweepTween = null;
+
+function el(id){ return document.getElementById(id) }
+
+var mainCanvas  = el('mainCanvas'),  mainCtx  = mainCanvas.getContext('2d');
+var curveCanvas = el('curveCanvas'), curveCtx = curveCanvas.getContext('2d');
+var cmpCanvas   = el('compareCanvas'), cmpCtx = cmpCanvas.getContext('2d');
+
+
+function calcDeltaDB(a, b, thetaM_deg, thetaS_deg){
+  var tm = thetaM_deg * DEG / 2;
+  var ts = thetaS_deg * DEG;
+  // CORRECCIÓN: Canal Izquierdo (L) usa +, Canal Derecho (R) usa -
+  var num = a + b * Math.cos(tm + ts); 
+  var den = a + b * Math.cos(tm - ts); 
+
+  if(den === 0 || num === 0){
+    return (num === 0 && den === 0) ? 0 : (num === 0 ? -60 : 60);
+  }
+  var ratio = Math.abs(num / den);
+  return ratio === 0 ? -60 : 20 * Math.log10(ratio);
+}
+
+
+function initFormula(){
+  katex.render(
+    // CORRECCIÓN: Reflejamos el cambio matemático en la fórmula en pantalla
+    String.raw`\Delta\text{dB} = 20 \log \left[\frac{a + b\cos\!\left(\frac{\theta_m}{2} + \theta_s\right)}{a + b\cos\!\left(\frac{\theta_m}{2} - \theta_s\right)}\right]`,
+    el('formulaBox'),
+    { displayMode: true, throwOnError: false }
+  );
+}
+
+function updateFormulaLive(){
+  var a = state.a, b = state.b;
+  var tm = state.thetaM / 2, ts = state.thetaS;
+  // CORRECCIÓN: Intercambio de signos para mostrar en vivo
+  var numA = (tm + ts).toFixed(1); 
+  var denA = (tm - ts).toFixed(1); 
+  var numV = (a + b * Math.cos((tm + ts) * DEG)).toFixed(4);
+  var denV = (a + b * Math.cos((tm - ts) * DEG)).toFixed(4);
+  var ddb  = calcDeltaDB(a, b, state.thetaM, ts);
+
+  el('formulaLive').innerHTML =
+    '<span class="hl">a</span> = ' + a.toFixed(3) + ' &nbsp; <span class="hl">b</span> = ' + b.toFixed(3) + '<br>' +
+    'θ<sub>m</sub>/2 = <span class="hl">' + tm.toFixed(1) + '°</span> &nbsp; θ<sub>s</sub> = <span class="hl">' + ts.toFixed(1) + '°</span><br>' +
+    'Num: ' + a.toFixed(3) + ' + ' + b.toFixed(3) + '·cos(' + numA + '°) = <span class="hl">' + numV + '</span><br>' +
+    'Den: ' + a.toFixed(3) + ' + ' + b.toFixed(3) + '·cos(' + denA + '°) = <span class="hl">' + denV + '</span><br>' +
+    '<strong>ΔdB = <span class="hl">' + ddb.toFixed(2) + ' dB</span></strong>';
+}
+
+
+function updateUI(){
+  var a = state.a, b = state.b, thetaM = state.thetaM, thetaS = state.thetaS;
+
+  el('aVal').textContent = a.toFixed(3);
+  el('bVal').textContent = b.toFixed(3);
+  el('thetaMVal').textContent = thetaM + '°';
+  el('thetaSVal').textContent = thetaS.toFixed(1) + '°';
+  el('srcDistVal').textContent = state.srcDist.toFixed(1) + ' m';
+
+  if(state.customMode){
+    el('customAVal').textContent = a.toFixed(2);
+    el('customBVal').textContent = b.toFixed(2);
+  }
+
+  var ddb = calcDeltaDB(a, b, thetaM, thetaS);
+  var clampDb = Math.max(-30, Math.min(30, ddb));
+
+  el('deltaDbValue').textContent = (ddb >= 0 ? '+' : '') + ddb.toFixed(1);
+  el('deltaDbBox').classList.toggle('negative', ddb < -0.1);
+
+  var pct = 50 - clampDb / 30 * 50;
+  el('stereoMarker').style.left = Math.max(2, Math.min(98, pct)) + '%';
+
+  // CORRECCIÓN: Los medidores visuales también deben usar los signos correctos
+  var numV = a + b * Math.cos((thetaM/2 + thetaS) * DEG);
+  var denV = a + b * Math.cos((thetaM/2 - thetaS) * DEG);
+  var maxResp = Math.max(Math.abs(numV), Math.abs(denV), 0.001);
+
+  var lPct = Math.abs(numV) / maxResp * 100;
+  var rPct = Math.abs(denV) / maxResp * 100;
+  el('chLBar').style.width = lPct + '%';
+  el('chRBar').style.width = rPct + '%';
+
+  var lDb = numV > 0 ? 20 * Math.log10(Math.abs(numV) / maxResp) : '-∞';
+  var rDb = denV > 0 ? 20 * Math.log10(Math.abs(denV) / maxResp) : '-∞';
+  el('chLDb').textContent = (typeof lDb === 'number' ? lDb.toFixed(1) : lDb) + ' dB';
+  el('chRDb').textContent = (typeof rDb === 'number' ? rDb.toFixed(1) : rDb) + ' dB';
+
+  updateFormulaLive();
+  drawMain();
+  drawCurve();
+  drawCompare();
+}
+
+
+function prepCanvas(canvas){
+  var dpr = window.devicePixelRatio || 1;
+  var w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  var ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+  return {ctx:ctx, w:w, h:h};
+}
+
+
+function drawMain(){
+  var o = prepCanvas(mainCanvas);
+  if(state.activeTab === 'arrangement') drawArrangement(o.ctx, o.w, o.h);
+  else drawPolarView(o.ctx, o.w, o.h);
+}
+
+
+function drawArrangement(ctx, w, h){
+  var cx = w/2, cy = h * 0.55;
+  var R = Math.min(w, h) * 0.38;
+  var a = state.a, b = state.b, thetaM = state.thetaM, thetaS = state.thetaS;
+  var halfM = thetaM * DEG / 2;
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(45,42,38,0.06)';
+  ctx.lineWidth = 1;
+  for(var r = R*0.25; r <= R; r += R*0.25){
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2*Math.PI); ctx.stroke();
+  }
+  for(var ang = 0; ang < 360; ang += 30){
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R*1.05*Math.cos(ang*DEG - Math.PI/2), cy + R*1.05*Math.sin(ang*DEG - Math.PI/2));
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = 'rgba(45,42,38,0.25)';
+  ctx.font = '11px "DM Sans"';
+  ctx.textAlign = 'center';
+  for(ang = 0; ang < 360; ang += 30){
+    var lx = cx + (R+18) * Math.cos(ang*DEG - Math.PI/2);
+    var ly = cy + (R+18) * Math.sin(ang*DEG - Math.PI/2);
+    ctx.fillText(ang + '°', lx, ly + 4);
+  }
+
+  function drawPolarLobe(ox, oy, axisAngle, color, alpha){
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    var steps = 180;
+    for(var i = 0; i <= steps; i++){
+      var theta = -Math.PI + i * (2*Math.PI / steps);
+      var resp = Math.abs(a + b * Math.cos(theta));
+      var rr = resp * R * 0.45;
+      var px = ox + rr * Math.cos(theta + axisAngle);
+      var py = oy + rr * Math.sin(theta + axisAngle);
+      if(i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = color + '33';
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    var axLen = R * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(ox, oy);
+    ctx.lineTo(ox + axLen*Math.cos(axisAngle), oy + axLen*Math.sin(axisAngle));
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([6,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  var lAngle = -Math.PI/2 - halfM;
+  var rAngle = -Math.PI/2 + halfM;
+
+  drawPolarLobe(cx, cy, lAngle, '#6B8A67', 0.7);
+  drawPolarLobe(cx, cy, rAngle, '#A8613F', 0.7);
+
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.arc(cx, cy, 35, lAngle, rAngle);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(196,163,90,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = '#C4A35A';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 35, lAngle, rAngle);
+  ctx.stroke();
+
+  ctx.fillStyle = '#C4A35A';
+  ctx.font = 'bold 11px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  var midA = (lAngle + rAngle) / 2;
+  ctx.fillText('θm=' + thetaM + '°', cx + 48*Math.cos(midA), cy + 48*Math.sin(midA) + 4);
+
+  var maxVisualDist = 12;
+  var distNorm = Math.max(0.3, Math.min(maxVisualDist, state.srcDist)) / maxVisualDist;
+  var srcR = R * (0.15 + distNorm * 0.85);
+
+  var srcAngle = -Math.PI/2 + thetaS * DEG;
+  var sx = cx + srcR * Math.cos(srcAngle);
+  var sy = cy + srcR * Math.sin(srcAngle);
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(122,46,58,0.3)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(sx, sy);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  var distLabelX = (cx + sx) / 2;
+  var distLabelY = (cy + sy) / 2;
+  var perpAngle = srcAngle + Math.PI/2;
+  distLabelX += 14 * Math.cos(perpAngle);
+  distLabelY += 14 * Math.sin(perpAngle);
+  ctx.fillStyle = 'rgba(45,42,38,0.55)';
+  ctx.font = '500 10px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText(state.srcDist.toFixed(1) + ' m', distLabelX, distLabelY + 3);
+
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.arc(cx, cy, 55, -Math.PI/2, srcAngle, thetaS < 0);
+  ctx.strokeStyle = '#7A2E3A';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  var tsLabelA = (-Math.PI/2 + srcAngle) / 2;
+  ctx.fillStyle = '#7A2E3A';
+  ctx.font = 'bold 11px "JetBrains Mono"';
+  ctx.fillText('θs=' + thetaS.toFixed(1) + '°', cx + 70*Math.cos(tsLabelA), cy + 70*Math.sin(tsLabelA) + 4);
+
+  var t = Date.now() / 800;
+  var pr = 8 + 2 * Math.sin(t);
+  ctx.beginPath(); ctx.arc(sx, sy, pr, 0, 2*Math.PI);
+  ctx.fillStyle = '#7A2E3A'; ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.stroke();
+
+  ctx.beginPath(); ctx.arc(sx, sy, pr + 6 + 4*Math.sin(t*1.5), 0, 2*Math.PI);
+  ctx.strokeStyle = 'rgba(122,46,58,0.2)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  ctx.beginPath(); ctx.arc(sx, sy, pr + 14 + 5*Math.sin(t*1.2), 0, 2*Math.PI);
+  ctx.strokeStyle = 'rgba(122,46,58,0.1)'; ctx.lineWidth = 1; ctx.stroke();
+
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 10px "DM Sans"';
+  ctx.textAlign = 'center';
+  ctx.fillText('S', sx, sy + 3.5);
+
+  var ms = 10;
+  function drawMic(x, y, angle, color, label){
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    
+    // CORRECCIÓN: El origen (0,0) es ahora exactamente la cápsula. 
+    // El cuerpo del microfono se dibuja desde el origen hacia "atrás".
+    ctx.beginPath(); ctx.rect(-ms/2, 0, ms, ms*2.5); 
+    ctx.fillStyle = color; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    
+    // Cápsula en el origen exacto
+    ctx.beginPath(); ctx.arc(0, 0, ms/2, Math.PI, 0);
+    ctx.fillStyle = color; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+    
+    // Empujamos la etiqueta (L/R) más lejos para que no se superponga
+    ctx.fillStyle = color;
+    ctx.font = 'bold 11px "DM Sans"';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x + 35*Math.cos(angle + Math.PI/2), y + 35*Math.sin(angle + Math.PI/2) + 4);
+  }
+
+  // CORRECCIÓN: Eliminamos el offset de ±8. Ahora ambos se sitúan exactamente en (cx, cy)
+  drawMic(cx, cy, lAngle + Math.PI/2, '#6B8A67', 'L');
+  drawMic(cx, cy, rAngle + Math.PI/2, '#A8613F', 'R');
+
+  var ddb = calcDeltaDB(a, b, thetaM, thetaS);
+  ctx.fillStyle = '#2D2A26';
+  ctx.font = '13px "DM Sans"';
+  ctx.textAlign = 'center';
+  ctx.fillText('ΔdB = ' + (ddb >= 0 ? '+' : '') + ddb.toFixed(1) + ' dB', cx, h - 16);
+
+  var panTxt = ddb > 1 ? '← Izquierda' : (ddb < -1 ? 'Derecha →' : 'Centro');
+  ctx.fillStyle = 'rgba(45,42,38,0.5)';
+  ctx.font = '11px "DM Sans"';
+  ctx.fillText(panTxt, cx, h - 34);
+
+  state._srcScreenX = sx;
+  state._srcScreenY = sy;
+  state._cx = cx;
+  state._cy = cy;
+  state._R = R;
+}
+
+
+function drawPolarView(ctx, w, h){
+  var cx = w/2, cy = h/2;
+  var R = Math.min(w, h) * 0.4;
+  var a = state.a, b = state.b;
+
+  ctx.strokeStyle = 'rgba(45,42,38,0.08)';
+  ctx.lineWidth = 1;
+  for(var r = R*0.2; r <= R; r += R*0.2){
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2*Math.PI); ctx.stroke();
+  }
+  for(var ang = 0; ang < 360; ang += 15){
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R*1.05*Math.cos(ang*DEG), cy + R*1.05*Math.sin(ang*DEG));
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = 'rgba(45,42,38,0.3)';
+  ctx.font = '10px "DM Sans"';
+  ctx.textAlign = 'center';
+  for(ang = 0; ang < 360; ang += 30){
+    ctx.fillText(ang + '°', cx + (R+16)*Math.cos(ang*DEG), cy + (R+16)*Math.sin(ang*DEG) + 3);
+  }
+
+  ctx.fillStyle = 'rgba(45,42,38,0.15)';
+  ctx.font = '10px "JetBrains Mono"';
+  [0.2, 0.4, 0.6, 0.8, 1.0].forEach(function(v, i){
+    ctx.fillText(v.toFixed(1), cx + 4, cy - R*(i+1)/5 + 3);
+  });
+
+  function tracePattern(axisRot, color, label){
+    ctx.beginPath();
+    for(var i = 0; i <= 360; i++){
+      var theta = i * DEG;
+      var resp = a + b * Math.cos(theta);
+      var rr = Math.abs(resp) * R;
+      var px = cx + rr * Math.cos(theta + axisRot);
+      var py = cy + rr * Math.sin(theta + axisRot);
+      if(i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = color + '22';
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.font = 'bold 12px "DM Sans"';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, cx + (R+35)*Math.cos(axisRot), cy + (R+35)*Math.sin(axisRot) + 4);
+  }
+
+  var halfM = state.thetaM * DEG / 2;
+  tracePattern(-Math.PI/2 - halfM, '#6B8A67', 'L');
+  tracePattern(-Math.PI/2 + halfM, '#A8613F', 'R');
+
+  ctx.fillStyle = '#2D2A26';
+  ctx.font = '600 13px "DM Sans"';
+  ctx.textAlign = 'center';
+  ctx.fillText('Patrón: a=' + a.toFixed(3) + ' + b=' + b.toFixed(3) + '·cos(θ)  |  θm = ' + state.thetaM + '°', cx, h - 16);
+}
+
+
+function drawCurveGrid(ctx, pad, pw, ph, dbRange, tsStep){
+  ctx.strokeStyle = 'rgba(45,42,38,0.1)';
+  ctx.lineWidth = 1;
+
+  for(var db = -dbRange; db <= dbRange; db += 10){
+    var y = pad.t + ph/2 - db/dbRange * (ph/2);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + pw, y); ctx.stroke();
+    ctx.fillStyle = 'rgba(45,42,38,0.35)';
+    ctx.font = '10px "JetBrains Mono"';
+    ctx.textAlign = 'right';
+    ctx.fillText((db >= 0 ? '+' : '') + db, pad.l - 8, y + 3);
+  }
+
+  for(var ts = -90; ts <= 90; ts += tsStep){
+    var x = pad.l + (ts + 90)/180 * pw;
+    ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, pad.t + ph); ctx.stroke();
+    if(ts % 30 === 0){
+      ctx.fillStyle = 'rgba(45,42,38,0.35)';
+      ctx.font = '10px "JetBrains Mono"';
+      ctx.textAlign = 'center';
+      ctx.fillText(ts + '°', x, pad.t + ph + 16);
+    }
+  }
+
+  var y0 = pad.t + ph/2;
+  ctx.strokeStyle = 'rgba(45,42,38,0.2)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l, y0); ctx.lineTo(pad.l + pw, y0); ctx.stroke();
+}
+
+
+function drawCurve(){
+  var o = prepCanvas(curveCanvas);
+  var ctx = o.ctx, w = o.w, h = o.h;
+  var pad = {l:55, r:20, t:20, b:40};
+  var pw = w - pad.l - pad.r, ph = h - pad.t - pad.b;
+  var dbRange = 40;
+
+  drawCurveGrid(ctx, pad, pw, ph, dbRange, 15);
+
+  ctx.beginPath();
+  ctx.strokeStyle = '#7A2E3A';
+  ctx.lineWidth = 2.5;
+  var started = false;
+  for(var i = 0; i <= 180; i++){
+    var ts = -90 + i;
+    var db = calcDeltaDB(state.a, state.b, state.thetaM, ts);
+    var clamp = Math.max(-dbRange, Math.min(dbRange, db));
+    var x = pad.l + i/180 * pw;
+    var y = pad.t + ph/2 - clamp/dbRange * (ph/2);
+    if(!started){ ctx.moveTo(x, y); started = true; }
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  var curTs = state.thetaS;
+  var curDb = calcDeltaDB(state.a, state.b, state.thetaM, curTs);
+  var clampCur = Math.max(-dbRange, Math.min(dbRange, curDb));
+  var mx = pad.l + (curTs + 90)/180 * pw;
+  var my = pad.t + ph/2 - clampCur/dbRange * (ph/2);
+
+  ctx.beginPath();
+  ctx.setLineDash([4,4]);
+  ctx.strokeStyle = 'rgba(122,46,58,0.3)';
+  ctx.lineWidth = 1;
+  ctx.moveTo(mx, pad.t); ctx.lineTo(mx, pad.t + ph);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.beginPath(); ctx.arc(mx, my, 6, 0, 2*Math.PI);
+  ctx.fillStyle = '#7A2E3A'; ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+
+  ctx.fillStyle = '#7A2E3A';
+  ctx.font = 'bold 11px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText((curDb >= 0 ? '+' : '') + curDb.toFixed(1) + ' dB', mx, my - 14);
+
+  ctx.fillStyle = '#2D2A26';
+  ctx.font = '11px "DM Sans"';
+  ctx.textAlign = 'center';
+  ctx.fillText('θs (grados)', w/2, h - 4);
+  ctx.save();
+  ctx.translate(14, h/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('ΔdB', 0, 0);
+  ctx.restore();
+}
+
+
+function drawCompare(){
+  var o = prepCanvas(cmpCanvas);
+  var ctx = o.ctx, w = o.w, h = o.h;
+  var pad = {l:55, r:20, t:20, b:40};
+  var pw = w - pad.l - pad.r, ph = h - pad.t - pad.b;
+  var dbRange = 40;
+
+  ctx.strokeStyle = 'rgba(45,42,38,0.08)';
+  ctx.lineWidth = 1;
+  for(var db = -dbRange; db <= dbRange; db += 10){
+    var y = pad.t + ph/2 - db/dbRange*(ph/2);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+pw, y); ctx.stroke();
+    ctx.fillStyle = 'rgba(45,42,38,0.3)';
+    ctx.font = '10px "JetBrains Mono"';
+    ctx.textAlign = 'right';
+    ctx.fillText((db>=0?'+':'') + db, pad.l-8, y+3);
+  }
+  for(var ts = -90; ts <= 90; ts += 30){
+    var x = pad.l + (ts+90)/180*pw;
+    ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, pad.t+ph); ctx.stroke();
+    ctx.fillStyle = 'rgba(45,42,38,0.3)';
+    ctx.font = '10px "JetBrains Mono"';
+    ctx.textAlign = 'center';
+    ctx.fillText(ts+'°', x, h - pad.b + 16);
+  }
+  var y0 = pad.t + ph/2;
+  ctx.strokeStyle = 'rgba(45,42,38,0.15)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, y0); ctx.lineTo(pad.l+pw, y0); ctx.stroke();
+
+  var legendBox = el('compareLegend');
+  legendBox.innerHTML = '';
+  var keys = Object.keys(PATTERNS);
+  for(var k = 0; k < keys.length; k++){
+    var p = PATTERNS[keys[k]];
+    ctx.beginPath();
+    ctx.strokeStyle = p.color;
+    ctx.lineWidth = 2;
+    var started = false;
+    for(var i = 0; i <= 180; i++){
+      var ts = -90 + i;
+      var db = calcDeltaDB(p.a, p.b, state.thetaM, ts);
+      var clamp = Math.max(-dbRange, Math.min(dbRange, db));
+      var x = pad.l + i/180*pw;
+      var y = pad.t + ph/2 - clamp/dbRange*(ph/2);
+      if(!started){ ctx.moveTo(x,y); started=true; } else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    legendBox.innerHTML += '<div class="legend-item"><div class="dot" style="background:'+p.color+'"></div>'+p.name+'</div>';
+  }
+
+  ctx.fillStyle = '#2D2A26'; ctx.font = '11px "DM Sans"'; ctx.textAlign = 'center';
+  ctx.fillText('θs (grados)', w/2, h-4);
+  ctx.save(); ctx.translate(14, h/2); ctx.rotate(-Math.PI/2); ctx.fillText('ΔdB',0,0); ctx.restore();
+
+  ctx.fillStyle = 'rgba(45,42,38,0.4)';
+  ctx.font = '11px "JetBrains Mono"';
+  ctx.textAlign = 'right';
+  ctx.fillText('θm = ' + state.thetaM + '°', w - pad.r - 4, pad.t + 14);
+}
+
+
+var sliderStateMap = {
+  thetaM:  { key: 'thetaM',  parse: parseInt,    suffix: '°' },
+  thetaS:  { key: 'thetaS',  parse: parseFloat,  suffix: '°' },
+  srcDist: { key: 'srcDist', parse: parseFloat,  suffix: ' m' },
+  customA: { key: 'a',       parse: parseFloat,  suffix: '' },
+  customB: { key: 'b',       parse: parseFloat,  suffix: '' }
+};
+
+function syncSliderToState(sliderId){
+  var slider = el(sliderId);
+  var mapping = sliderStateMap[sliderId];
+  if(!mapping) return;
+  state[mapping.key] = mapping.parse(slider.value);
+  updateUI();
+}
+
+document.querySelectorAll('input[type="range"][data-default]').forEach(function(slider){
+  slider.addEventListener('input', function(){
+    syncSliderToState(slider.id);
+  });
+
+  slider.addEventListener('dblclick', function(){
+    var def = slider.getAttribute('data-default');
+    slider.value = def;
+    syncSliderToState(slider.id);
+
+    slider.classList.remove('reset-flash');
+    void slider.offsetWidth;
+    slider.classList.add('reset-flash');
+    setTimeout(function(){ slider.classList.remove('reset-flash') }, 400);
+  });
+});
+
+
+document.querySelectorAll('.control-label .value[data-slider]').forEach(function(badge){
+  badge.addEventListener('click', function(e){
+    if(badge.querySelector('input')) return;
+
+    var sliderId = badge.getAttribute('data-slider');
+    var slider = el(sliderId);
+    var mapping = sliderStateMap[sliderId];
+    if(!mapping) return;
+
+    var rawVal = state[mapping.key];
+    var currentText = typeof rawVal === 'number' ? rawVal : parseFloat(rawVal);
+
+    var inp = document.createElement('input');
+    inp.type = 'text';
+    inp.className = 'value-input';
+    inp.value = currentText;
+
+    var originalText = badge.textContent;
+    badge.textContent = '';
+    badge.appendChild(inp);
+    inp.focus();
+    inp.select();
+
+    function commit(){
+      var parsed = parseFloat(inp.value);
+      if(isNaN(parsed)){
+        badge.textContent = originalText;
+        return;
+      }
+      var min = parseFloat(slider.min);
+      var max = parseFloat(slider.max);
+      parsed = Math.max(min, Math.min(max, parsed));
+
+      slider.value = parsed;
+      syncSliderToState(sliderId);
+    }
+
+    function abort(){
+      badge.textContent = originalText;
+    }
+
+    var done = false;
+    inp.addEventListener('keydown', function(ev){
+      if(ev.key === 'Enter'){
+        done = true;
+        commit();
+      } else if(ev.key === 'Escape'){
+        done = true;
+        abort();
+      }
+    });
+
+    inp.addEventListener('blur', function(){
+      if(!done) commit();
+    });
+  });
+});
+
+
+document.querySelectorAll('.pattern-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.pattern-btn').forEach(function(b){ b.classList.remove('active') });
+    btn.classList.add('active');
+
+    if(btn.id === 'customBtn'){
+      state.customMode = true;
+      el('customAbGroup').style.display = 'block';
+      state.a = parseFloat(el('customA').value);
+      state.b = parseFloat(el('customB').value);
+    } else {
+      state.customMode = false;
+      el('customAbGroup').style.display = 'none';
+      state.a = parseFloat(btn.dataset.a);
+      state.b = parseFloat(btn.dataset.b);
+    }
+    updateUI();
+  });
+});
+
+
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active') });
+    btn.classList.add('active');
+    state.activeTab = btn.dataset.tab;
+    drawMain();
+  });
+});
+
+
+function toggleSweep(){
+  if(state.sweepRunning){
+    state.sweepRunning = false;
+    el('sweepBtn').textContent = '▶ Barrido Animado';
+    el('sweepBtn').classList.remove('running');
+    if(sweepTween) sweepTween.kill();
+    return;
+  }
+
+  state.sweepRunning = true;
+  el('sweepBtn').textContent = '⏹ Detener';
+  el('sweepBtn').classList.add('running');
+
+  state.thetaS = -90;
+  el('thetaS').value = -90;
+
+  sweepTween = gsap.to(state, {
+    thetaS: 90, duration: 4, ease: 'none',
+    onUpdate: function(){
+      el('thetaS').value = state.thetaS;
+      updateUI();
+    },
+    onComplete: function(){
+      gsap.to(state, {
+        thetaS: -90, duration: 4, ease: 'none',
+        onUpdate: function(){
+          el('thetaS').value = state.thetaS;
+          updateUI();
+        },
+        onComplete: function(){
+          if(state.sweepRunning){
+            toggleSweep();
+            setTimeout(function(){ if(!state.sweepRunning) toggleSweep(); }, 100);
+          }
+        }
+      });
+    }
+  });
+}
+
+
+(function(){
+  var canvas = mainCanvas;
+  var dragging = false;
+
+  function posFromEvent(e){
+    var rect = canvas.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  function handleDragMove(x, y){
+    if(!state._cx) return;
+    var dx = x - state._cx, dy = y - state._cy;
+    var angle = Math.atan2(dy, dx) + Math.PI/2;
+    var deg = angle / DEG;
+    if(deg > 180) deg -= 360;
+    if(deg < -180) deg += 360;
+    deg = Math.max(-90, Math.min(90, deg));
+    state.thetaS = Math.round(deg * 2) / 2;
+    el('thetaS').value = state.thetaS;
+
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    var maxVisualDist = 12;
+    var R = state._R;
+    var distMeters = ((dist / R - 0.15) / 0.85) * maxVisualDist;
+    distMeters = Math.max(0.3, Math.min(maxVisualDist, Math.round(distMeters * 10) / 10));
+    state.srcDist = distMeters;
+    el('srcDist').value = distMeters;
+
+    updateUI();
+  }
+
+  function isNearSource(x, y){
+    if(!state._srcScreenX) return false;
+    var dx = x - state._srcScreenX, dy = y - state._srcScreenY;
+    return Math.sqrt(dx*dx + dy*dy) < 28;
+  }
+
+  canvas.addEventListener('mousedown', function(e){
+    if(state.activeTab !== 'arrangement') return;
+    var p = posFromEvent(e);
+    if(isNearSource(p.x, p.y)){
+      dragging = true;
+      el('dragHint').style.opacity = '0';
+    }
+  });
+
+  canvas.addEventListener('mousemove', function(e){
+    if(!dragging) return;
+    var p = posFromEvent(e);
+    handleDragMove(p.x, p.y);
+  });
+
+  window.addEventListener('mouseup', function(){ dragging = false });
+
+  canvas.addEventListener('touchstart', function(e){
+    if(state.activeTab !== 'arrangement') return;
+    var touch = e.touches[0];
+    var rect = canvas.getBoundingClientRect();
+    var tx = touch.clientX - rect.left, ty = touch.clientY - rect.top;
+    if(isNearSource(tx, ty)){
+      dragging = true;
+      e.preventDefault();
+      el('dragHint').style.opacity = '0';
+    }
+  }, {passive: false});
+
+  canvas.addEventListener('touchmove', function(e){
+    if(!dragging) return;
+    e.preventDefault();
+    var touch = e.touches[0];
+    var rect = canvas.getBoundingClientRect();
+    handleDragMove(touch.clientX - rect.left, touch.clientY - rect.top);
+  }, {passive: false});
+
+  canvas.addEventListener('touchend', function(){ dragging = false });
+
+  setTimeout(function(){ el('dragHint').style.opacity = '1' }, 1500);
+  setTimeout(function(){ el('dragHint').style.opacity = '0' }, 5000);
+})();
+
+
+function animLoop(){
+  if(state.activeTab === 'arrangement') drawMain();
+  requestAnimationFrame(animLoop);
+}
+
+initFormula();
+updateUI();
+animLoop();
+
+window.addEventListener('resize', function(){ updateUI() });
+</script>
+</body>
+</html>
